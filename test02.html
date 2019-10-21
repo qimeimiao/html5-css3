@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head runat="server">
+		<meta charset="UTF-8">
+		<title></title>	
+		<script type="text/javascript" src="http://api.go2map.com/maps/js/api_v2.0.js"></script>
+		
+		<script type="text/javascript">
+			var map, mapsEventListener;
+			function initializel(){
+				if(navigator.geolocation){
+					navigator.geolocation.getCurrentPosition(
+						function (position){
+							var coords=position.coords;
+							var latitude=coords.latitude;
+							var longitude=coords.longitude;
+							//开始调用搜狗地图API
+							var myLatlng=new sogou.maps.LatLng(latitude,longitude);
+							var myOptions={
+								zoom:16,
+								center:myLatlng,
+								mapTypeId:sogou.maps.MapTypeId.ROADMAP
+							}
+							map=new sogou.maps.Map(document.getElementById("map_canvas"),myOptions);
+							var marker=new sogou.maps.Marker({
+								position:myLatlng,
+								map:map,
+								title:"您当前的位置"
+							});
+							var infowindow=new sogou.maps.InfoWindow({
+								content:"经度:"+longitude+"维度："+latitude
+							});
+							mapsEventListener=sogou.maps.event.addListener(marker,'click',function(){
+								infowindow.open(map,marker);
+							});
+						},
+						function (error){
+						switch(error.code){
+							case error.POSITION_UNAVAILABLE:
+								alert('用户拒绝位置服务');
+								break;
+							case error.PERMISSION_DENIED:
+								alert('无法检测');
+							case error.TIMEOUT:
+								alert('不允许共享');
+								break;
+							case error.UNKNOWN_ERROE:
+								alert('未知错误');
+								break;
+							}
+						}
+					);			
+				}
+			}
+			
+		</script>
+	
+	</head>
+	<body onload="initializel()">
+		
+		<div id="map_canvas" style="width: 500px; height: 500px;"></div>
+	</body>	
+</html>

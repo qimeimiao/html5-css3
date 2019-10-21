@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Title</title>
+		<script src="js/jquery-3.3.1.min.js"></script>
+		
+	</head>
+
+	<body>
+		<section style="margin: 10px 10px">
+			<input type="button" value="打开或创建数据" onclick="openDB()" />
+			<input type="button" value="新增" onclick="addData()" />
+			<input type="button" value="查询" onclick="getData()" />
+			<input type="button" value="删除" onclick="removeData()" />
+			<input type="button" value="修改" onclick="modifyData()" />
+		</section>
+		<section>
+			<input id="txt_name" type="text" placeholder="请输入姓名" style="margin: 10px 10px" /><br/>
+			<section style="margin: 10px 10px">
+				<label>男<input id="rdo_male" name="radio_sex" type="radio" value="1"></label>
+				<label>女<input id="rdo_female" name="radio_sex" type="radio" value="2"></label><br/>
+			</section>
+			<input id="txt_age" type="number" placeholder="请输入年龄" style="margin: 10px 10px" /><br/>
+			<input id="txt_salary" type="number" placeholder="请输入您的薪资" style="margin: 10px 10px" />
+		</section>
+		<div id="div_result"></div>
+
+		<script type="text/javascript">
+			
+				//打开数据库
+			var db;
+			function openDB(){
+				//第一步获取IDBFactory对象：open,deleteDatabase
+				var indexedDb=window.indexedDB;
+				//第二部：获取数据库连接请求对象
+				var request=indexedDB.open("cxk",1);
+				//添加连接请求成功回调方法，其中会传入参数event对象
+				//三个回调方法:onsuccess,onerror,onupgradeneeded
+				request.onsuccess=function(event){
+					//第四步:获取数据库操作对象
+					db=event.target.result;
+					console.log("打开数据库成功");
+				}
+				request.onerror=function(err){
+					console.log("打开数据库失败");	
+				}
+				// 所有创建对象仓库、创建索引的操作都在升级回调方法中执行
+				request.onupgradeneeded=function(event){
+					db=event.target.result;
+					// 添加一个对象仓库：在使用对象仓库或索引之前一定要先添加
+					var objectStore=db.createObjectStore("person",{
+						keypath:"id",//设置主键
+						autoIncrement:true  // 设置主键自增
+					});
+					// 创建索引
+                store.createIndex('nameIndex', 'name',{unique:false});
+                store.createIndex('ageIndex', 'age',{unique:false});
+				}				
+			}			      
+      
+
+		    /**
+		     * 新增数据
+		     */
+		    function addData() {
+		        openDB(function () {
+		            var data = {
+		                'name': $("#txt_name").val(),
+		                'sex':  $("input[name='radio_sex']:checked").val(),
+		                'age': $("#txt_age").val(),
+		                'salary': $("#txt_salary").val()
+		            };
+		            // 第四步：创建一个事务
+		            var tx = db.transaction(["person"], "readwrite");
+		            // 第五步：获取将要操作的对象仓库
+		            var store = tx.objectStore("person");
+		            // 第六步：使用对象仓库的方法进行数据的增删改查
+		            store.add(data);
+		
+		            // 关闭数据
+		            db.close();
+		        });
+		    }
+
+		    /**
+		     * 删除数据
+		     */
+		    function removeData() {
+		        openDB(function () {
+		            // 第四步：创建一个事务
+		            var tx = db.transaction(["person"], "readwrite");
+		            // 第五步：获取将要操作的对象仓库
+		            var store = tx.objectStore("person");
+		            // 第六步：使用对象仓库的方法进行数据的增删改查
+		            var request = store.delete(1);// 传入数据库主键值，如1
+		            request.onsuccess = function(event){
+		                console.log("删除成功！");
+		                // 关闭数据
+		                db.close();
+		            }
+		        });
+		    }
+
+		    /**
+		     * 修改数据
+		     */
+		    function modifyData() {
+		        openDB(function () {
+		            var data ={
+		                'id':1,//指定要修改的主键值
+		                'name': $("#txt_name").val(),
+		                'sex':  $("input[name='radio_sex']:checked").val(),
+		                'age': $("#txt_age").val(),
+		                'salary': $("#txt_salary").val()
+		            };
+		
+		            // 第四步：创建一个事务
+		            var tx = db.transaction(["person"], "readwrite");
+		            // 第五步：获取将要操作的对象仓库
+		            var store = tx.objectStore("person");
+		            // 第六步：使用对象仓库的方法进行数据的增删改查
+		            // add是新增，put是主键属性值不存在就新增，存在就更新
+		            var request = store.put(data);
+		            request.onsuccess = function(event){
+		                console.log("修改成功！");
+		                db.close();
+		            }
+		        });
+		    }
+
+		    /**
+		     * 查询数据
+		     */
+		    function getData() {
+		        openDB(function () {
+		            // 第四步：创建一个事务
+		            var tx = db.transaction(["person"], "readonly");
+		            // 第五步：获取将要操作的对象仓库
+		            var store = tx.objectStore("person");
+		            // 第六步：使用对象仓库的方法进行数据的增删改查
+		            //var request = objectStore.openCursor(null, 'prev');
+		            var nameIndex = store.index("nameIndex");
+		            var request = nameIndex.openCursor();
+		            request.onsuccess = function(event){
+		                var cursor = event.target.result;
+		                if(cursor){
+		                    console.log(cursor.value);
+		                    var html = "id："+ cursor.value.id + "<br/>"
+		                        + "姓名："+ cursor.value.name + "<br/>"
+		                        + "性别："+ (cursor.value.sex==1?"男":"女") + "<br/>"
+		                        + "年龄："+cursor.value.age + "<br/>"
+		                        + "薪资："+cursor.value.salary + "<br/>";
+		                    $("#div_result").html(html);
+		                    cursor.continue();
+		                }
+		                
+		    function searchData(){
+        		var tx = db.transaction('students',"readwrite");//获取查询事务
+				var store = tx.objectStore('students');//查询并获得表
+				var index = store.index("sidIndex");//获得索引
+				index.get(103).onsuccess = function(e){//通过索引回调获得“102”的信息对象
+					if(this.result==undefined){
+						alert("查询失败")
+					}else{
+						alert(this.result.sid+ " " + this.result.sno + " " + this.result.sname+ " " + this.result.sage);
+					}
+					
+				}
+        	}
+            
+		               
+		
+		                // 关闭数据
+		                db.close();
+		            }
+		        });
+		    }
+
+		    /**
+		     * 删除数据库
+		     */
+		    function dropDB() {
+		        var indexedDB = window.indexedDB;
+		        indexedDB.deleteDatabase("db");
+		        console.log("数据库删除成功！");
+		    }						
+		</script>
+	</body>
+</html>

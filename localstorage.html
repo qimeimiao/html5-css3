@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>信息查询</title>
+		<link href="css/bootstrap.css" rel="stylesheet" />
+		<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap.js"></script>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			body {
+				background: #f2f2f2;
+			}
+			
+			.sec_header {
+				height: 45px;
+				line-height: 45px;
+				width: 100%;
+				text-align: center;
+				font-size: 25px;
+				color: #fff;
+				font-family: 微软雅黑;
+				padding: 0 8px;
+				position: relative;
+				z-index: 2;
+				background-color: #006699;
+			}
+			
+			.sec_header a {
+				overflow: hidden;
+				margin: 10px 5px 0;
+				width: 24px;
+				height: 25px;
+				line-height: 25px;
+				text-indent: -300px;
+				font-size: .75rem;
+			}
+			
+			.sec_header a:first-child {
+				float: left;
+				background-image: url(img/icon_back_white.png);
+				background-repeat: no-repeat;
+				background-size: 24px auto;
+			}
+			
+			.sec_header a:last-child {
+				float: right;
+				background-image: url(img/icon_add_white.png);
+				background-repeat: no-repeat;
+				background-size: 24px auto;
+			}
+			
+			.sec_header span {
+				font-size: 1.1rem;
+			}
+			
+			.ma-10 {
+				width: auto;
+				margin: 0.8rem !important;
+			}
+			
+			.btn-search {
+				color: white;
+				background-color: #006699;
+			}
+			
+			.btn-search:focus,
+			.btn-search:active,
+			.btn-outline-secondary:hover {
+				color: white;
+				background-color: #006699;
+				border: 0;
+				outline: 0;
+				box-shadow: 0 0 0 0;
+			}
+			
+			.sec-search-clue {
+				position: relative;
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+				align-items: center;
+				padding: 0 1.25rem;
+				margin-bottom: -1px;
+				background-color: #fff;
+				border: 1px solid rgba(0, 0, 0, 0.125);
+			}
+			
+			.sec-search-clue-item {
+				padding: 0.55rem 0;
+			}
+			
+			.sec-search-content {
+				margin: 0 0.8rem 0.8rem 0.8rem;
+				font-size: 14px;
+			}
+			
+			.btn_delete {
+				background-image: url(img/icon_delete.png);
+				background-repeat: no-repeat;
+				background-size: 20px auto;
+				background-position: center center;
+				display: inline-block;
+				width: 20px;
+				height: 20px;
+				vertical-align: top;
+			}
+			
+			.icon-circle {
+				background-image: url(img/icon_delete_circle.png);
+				background-repeat: no-repeat;
+				background-size: 20px auto;
+				background-position: center center;
+				display: inline-block;
+				width: 20px;
+				height: 20px;
+			}
+			
+			#sweet-modal {
+				margin: 0 15%;
+				padding: 0;
+				width: 70%;
+				text-align: center;
+				vertical-align: middle;
+				border-radius: 5px;
+				border: 1px solid deepskyblue;
+				opacity: 0;
+				transform: scale(0.7);
+				transition: transform 0.25s, opacity 0.2s, -webkit-transform 0.25s;
+			}
+			
+			#sweet-modal.modal-active {
+				opacity: 1;
+				transform: scale(1);
+			}
+			
+			#sweet-modal+.backdrop {
+				background-color: rgba(0, 0, 0, 0.1);
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<section class="sec_header">
+			<nav>
+				<a id="gohome" class="back-header left" href="javascript:;" title="">返回</a>
+				<span>搜索中心</span>
+				<a id="save_top" class="save-sub-header disable right" href="javascript:;" title="">保存</a>
+			</nav>
+		</section>
+		<section class="input-group ma-10">
+			<input id="ipt_search" type="text" class="form-control" placeholder="请输入要搜索的商品" aria-label="请输入要搜索的商品" aria-describedby="button-addon2">
+			<div class="input-group-append">
+				<button class="btn btn-outline-secondary btn-search" type="button" id="button-addon2" onclick="addKeywords()">搜索</button>
+			</div>
+		</section>
+		<section class="sec-search-content">
+			<div class="sec-search-clue">
+				<span class="sec-search-clue-item">搜索历史</span>
+				<span class="sec-search-clue-item" onclick="clearAll()"><i class="btn_delete"></i>清空记录</span>
+			</div>
+			<ul id="list_clue" class="list-group">
+				<li class="list-group-item d-flex justify-content-between align-items-center">
+					暂时没有历史记录
+				</li>
+			</ul>
+			<ul id="list_keywords" class="list-group">
+			</ul>
+		</section>
+		<dialog id="sweet-modal">
+			<div class="toast-body">
+
+			</div>
+		</dialog>
+		<script>
+			
+			var key="hots";
+			function addKeywords(){
+				var text=$("#ipt_search").val();
+			}
+			
+			
+			
+		</script>
+
+	</body>
+
+</html>
